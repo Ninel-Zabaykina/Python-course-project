@@ -15,7 +15,7 @@ class Second(View):
         output = ''
         for client in clients:
             output += f'<a href="admin/clients/client/{client.id}/change/">'
-            output += f'We have {client.surname} with ID {client.id} in our Database <br />'
+            output += f'{client.surname} {client.name} {client.otchestvo} <br />'
             output += '</a>'
         if not len(clients):
             output += f'У нас нет чуваков с такой фамилией <br />'
@@ -28,19 +28,17 @@ class Second(View):
         output += '<input type="submit" value="Add">'
         output += '</form>'
 
-        return HttpResponse(output)
-
-
-class Spravki(View):
-
-    def get(self, request):
+        if request.GET.get("ne_hodit", None) is not None:
+            Client.objects.filter(pk=request.GET.get("client_id", 0)).update(active=True)
         clients = Client.objects.order_by('date_of_reference').all()
-        output = ''
         for client in clients:
-            # today = datetime.now()
-            # date_spravki = datetime.strptime(Client.date_of_reference.date,  '%Y-%m-%d')
-            # if (today-date_spravki).days > 90:
-            if client.since > 90:
-                output += f'{client.surname} {client.name} {client.otchestvo} {client.date_of_reference} <br />'
+            if client.since > 90 and not client.active:
+                output += f'{client.surname} {client.name} {client.otchestvo} {client.date_of_reference} '
+                output += f'<a href="admin/clients/client/{client.id}/change/">Принесли</a>'
+                output += f'<a href="?client_id={client.id}&ne_hodit=1">Ne hodit</a>'
+                output += '<br />'
 
         return HttpResponse(output)
+
+
+
