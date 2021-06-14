@@ -12,6 +12,7 @@ class Client(models.Model):
     date_of_reference = models.DateField()
     disabled = models.BooleanField()
     have_many_children = models.BooleanField()
+    active = models.BooleanField()
 
     @property
     def since(self):
