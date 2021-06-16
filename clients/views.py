@@ -1,17 +1,11 @@
 from clients.models import Client
 from django.views import View
-from django.http import HttpResponse
 from django.shortcuts import render
 
 
 class Second(View):
 
     def get(self, request):
-        search = request.GET.get("search", None)
-        if search is not None:
-            clients = Client.objects.filter(surname__icontains=search)
-        else:
-            clients = Client.objects.all()
         output = ''
 
         output += '<form class="form-inline">'
@@ -26,12 +20,16 @@ class Second(View):
             if client.since > 90 and not client.active:
                 output += '<div class="alert alert-danger" role="alert">'
                 output += f'{client.surname} {client.name} {client.otchestvo} {client.date_of_reference}'
-                output += f'<a href="admin/clients/client/{client.id}/change/" class="btn btn-success" style="margin-left:120px ">Принесли</a>'
-                output += f'<a href="?client_id={client.id}&ne_hodit=1" class="btn btn-danger" style="float:right;">Не ходит</a>'
+                output += f'<a href="admin/clients/client/{client.id}/change/" class="btn btn-success float-right btn-sm">Принесли</a>'
+                output += '<div class="float-right">&nbsp;</div>'
+                output += f'<a href="?client_id={client.id}&ne_hodit=1" class="btn btn-danger float-right btn-sm">Не ходит</a>'
                 output += '</div>'
 
-
-
+        search = request.GET.get("search", None)
+        if search is not None:
+            clients = Client.objects.filter(surname__icontains=search)
+        else:
+            clients = Client.objects.all()
         output += '<div></div>'
         output += '''<table class="table table-striped">
                     <thead>
@@ -72,7 +70,4 @@ class Second(View):
         output += '<input type="submit" class="btn btn-warning" value="Добавить нового клиента">'
         output += '</form></div>'
 
-        # return HttpResponse(output)
         return render(request, 'general.html', context={'output': output})
-
-
