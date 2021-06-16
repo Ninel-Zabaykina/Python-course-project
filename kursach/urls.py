@@ -15,10 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from clients.views import Second, Spravki
+from clients.views import Second
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('second', Second.as_view()),
-    path('spravki', Spravki.as_view()),
 ]
